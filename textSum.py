@@ -59,9 +59,26 @@ def training(trainingFile):
         IDFs[word] = math.log(doc_count / wordCount[word])
     return IDFs
 
+def avgIDF (IDFs, testFile):
+    test_docs = open(testFile, "r", encoding="utf-8")
+    avg_sent_IDF = dict()
+
+    for line in test_docs:
+        sum = 0
+        print(line)
+        for word in line.split():
+            if word in IDFs:
+                sum += IDFs[word]
+        avg = sum / len(line)
+        avg_sent_IDF[line] = avg
+    print(avg_sent_IDF)    
+
 def main():
     IDFs = training(training_data)
-    print(IDFs)
+    #print(IDFs)
+    avgIDF(IDFs, test_data)
+
+    
 
 
 if __name__ == "__main__":
