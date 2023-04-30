@@ -2,11 +2,17 @@
 A module for storing text-preprocessing functionality.
 Resposible for cleaning up the  unnecessary characters/noise from text
 """
+# REPLACED 
+# import jsonlines --> import json (import jsonlines doesn't exist???)
 import json
 import os
 import pandas as pd
 import pickle
 import re
+
+# ADDED
+# to accept command-line args for bash script (cleanText.sh)
+import sys
 
 def replace_semicolon(text, threshold=10):
     '''
@@ -131,10 +137,11 @@ def clean_text(text):
 if __name__ == '__main__':
 
     # opening the input (bills) and output (cleaned text) files
-    bills = open("./data/billsToClean.jsonl", "r")
+    # bills = open("./data/billsToClean.jsonl", "r")
+    bills = open(sys.argv[1], "r")
 
-    # bills = open("./data/toClean.jsonl", "r")
-    cleaned = open("./data/cleanText.txt", "w")
+    # cleaned = open("./data/cleanText.txt", "w")
+    cleaned = open(sys.argv[2], "w")
 
     # iterating through each line in bills, since each line is a JSON object
     for line in bills:
