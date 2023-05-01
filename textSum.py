@@ -13,6 +13,7 @@ parser.add_argument("training_data", help="data to train the model and get IDFs 
 parser.add_argument("test_data", help="data to run the model on and output sample summaries")
 parser.add_argument("start_sentences", help="number of sentences at start of paragraph to be weighted more")
 parser.add_argument("threshold", help="threshold of avg IDF when outputting")
+parser.add_argument("stoplist", help="stoplist")
 # parses arguments into args
 args = parser.parse_args()
 
@@ -21,8 +22,9 @@ training_data = args.training_data
 test_data = args.test_data
 start_sentences = int(args.start_sentences)
 threshold = float(args.threshold)
+stoplist = args.stoplist
 
-def training(trainingFile):
+def training(trainingFile, stoplist):
     """
         Trains the model by going through the training 
         documents and calculating the IDFs for the words
@@ -47,12 +49,13 @@ def training(trainingFile):
             # set of words seen in the current doc
             inCurrDoc = set([])
             for word in sentence.split():
-                if word.lower() not in inCurrDoc:
-                    inCurrDoc.add(word.lower())
-                    if word.lower() not in wordCount:
-                        wordCount[word.lower()] = 1
-                    else:
-                        wordCount[word.lower()] += 1
+                if word.lower() not in stoplist:
+                    if word.lower() not in inCurrDoc:
+                        inCurrDoc.add(word.lower())
+                        if word.lower() not in wordCount:
+                            wordCount[word.lower()] = 1
+                        else:
+                            wordCount[word.lower()] += 1
     
     # calculate IDF for all words
     IDFs = dict()
@@ -61,7 +64,7 @@ def training(trainingFile):
     training_docs.close()
     return IDFs
 
-def avgIDF (IDFs, testFile):
+def avgIDF (IDFs, testFile, stoplist):
     test_docs = open(testFile, "r", encoding="utf-8")
     avg_sent_IDF = dict()
 
@@ -70,10 +73,10 @@ def avgIDF (IDFs, testFile):
         for sentence in doc.split(". "): # split each doc into sentences
             print(sentence)
             for word in sentence.split():
-                if word.lower() in IDFs:
+                if word.lower() in IDFs and word.lower() not in stoplist:
                     sum += IDFs[word.lower()]
             avg = sum / len(sentence)
-            avg_sent_IDF[sentence] = avg
+            avg_sent_IDF[f'{sentence}.'] = avg
     print(avg_sent_IDF)  
     test_docs.close()
     return avg_sent_IDF
@@ -92,10 +95,10 @@ def outputSummary (avg_sentence_IDFs, threshold):
 
 def main():
     # train by getting IDFs of each word
-    IDFs = training(training_data)
+    IDFs = training(training_data, stoplist)
     print(IDFs)
     # get the avg IDF of each sentence based on the training
-    sentenceIDFs=avgIDF(IDFs, test_data)
+    sentenceIDFs=avgIDF(IDFs, test_data, stoplist)
 
     # now that we have the avg IDF for each sentence, 
     # we want to output the sentences that meet the threshold
