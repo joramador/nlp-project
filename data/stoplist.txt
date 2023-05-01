@@ -57,6 +57,7 @@ both
 but
 by
 ca.
+chapter
 de
 des
 despite
@@ -163,6 +164,7 @@ so
 some
 someone
 something
+subchapter
 than
 that
 the
