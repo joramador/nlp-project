@@ -13,7 +13,6 @@ parser.add_argument("training_data", help="data to train the model and get IDFs 
 parser.add_argument("test_data", help="data to run the model on and output sample summaries")
 parser.add_argument("start_sentences", help="number of sentences at start of paragraph to be weighted more")
 parser.add_argument("threshold", help="threshold of avg IDF when outputting")
-parser.add_argument("stoplist", help="stoplist")
 # parses arguments into args
 args = parser.parse_args()
 
@@ -22,7 +21,7 @@ training_data = args.training_data
 test_data = args.test_data
 start_sentences = int(args.start_sentences)
 threshold = float(args.threshold)
-stoplist = args.stoplist
+stoplist = "data/stoplist.txt"
 
 def training(trainingFile, stoplist):
     """
@@ -39,8 +38,6 @@ def training(trainingFile, stoplist):
     
     training_docs = open(trainingFile, "r", encoding="utf-8")
 
-    # remove stop words
-        
     doc_count = 0
     # get df for all words
     for doc in training_docs:
@@ -60,7 +57,8 @@ def training(trainingFile, stoplist):
     # calculate IDF for all words
     IDFs = dict()
     for word in wordCount:
-        IDFs[word.lower()] = math.log(doc_count / wordCount[word.lower()])
+        if (wordCount[word] > 1):
+            IDFs[word.lower()] = math.log(doc_count / wordCount[word.lower()])
     training_docs.close()
     return IDFs
 
@@ -71,10 +69,12 @@ def avgIDF (IDFs, testFile, stoplist):
     for doc in test_docs: # each line is a doc
         sum = 0
         for sentence in doc.split(". "): # split each doc into sentences
-            print(sentence)
+            #print(sentence)
             for word in sentence.split():
+                # word in IDFs and word not in stoplist
                 if word.lower() in IDFs and word.lower() not in stoplist:
                     sum += IDFs[word.lower()]
+                    print(word.lower() + str(IDFs[word.lower()]))
             avg = sum / len(sentence)
             avg_sent_IDF[f'{sentence}.'] = avg
     print(avg_sent_IDF)  
@@ -96,7 +96,7 @@ def outputSummary (avg_sentence_IDFs, threshold):
 def main():
     # train by getting IDFs of each word
     IDFs = training(training_data, stoplist)
-    print(IDFs)
+    #print(IDFs)
     # get the avg IDF of each sentence based on the training
     sentenceIDFs=avgIDF(IDFs, test_data, stoplist)
 
