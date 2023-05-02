@@ -84,17 +84,19 @@ def avgIDF (IDFs, testFile, stoplist, rho):
     avg_sent_IDF = dict()
 
     sum = 0
-    for sentence in test_doc.split(". "): # split each doc into sentences
-        #print(sentence)
-        for word in sentence.split():
-            # word in IDFs and word not in stoplist
-            if word.lower() in IDFs and word.lower() not in stoplist:
-                sum += IDFs[word.lower()]
-            else:
-                sum += rho
-        avg = sum / len(sentence)
-        avg_sent_IDF[f'{sentence}.'] = avg
-    print(avg_sent_IDF)  
+    # will only iterate once
+    for doc in test_doc:
+        for sentence in doc.split(". "): # split each doc into sentences
+            #print(sentence)
+            for word in sentence.split():
+                # word in IDFs and word not in stoplist
+                if word.lower() in IDFs and word.lower() not in stoplist:
+                    sum += IDFs[word.lower()]
+                else:
+                    sum += rho
+            avg = sum / len(sentence)
+            avg_sent_IDF[f'{sentence}.'] = avg
+    print(avg_sent_IDF) 
     test_doc.close()
     return avg_sent_IDF
 
