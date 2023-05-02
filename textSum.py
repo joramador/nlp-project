@@ -40,6 +40,7 @@ def training(trainingFile, stoplistFile):
 
     sList = open(stoplistFile, "r", encoding="utf-8")
     stoplist = set(sList.readlines())
+    stoplist = [word.strip("\n") for word in stoplist]
 
     doc_count = 0
     # get df for all words
@@ -71,6 +72,7 @@ def avgIDF (IDFs, testFile, stoplistFile):
 
     sList = open(stoplistFile, "r", encoding="utf-8")
     stoplist = set(sList.readlines())
+    stoplist = [word.strip("\n") for word in stoplist]
 
     for doc in test_docs: # each line is a doc
         sum = 0
