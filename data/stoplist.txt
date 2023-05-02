@@ -107,6 +107,7 @@ into
 it
 its
 itself
+is
 la
 le
 les
