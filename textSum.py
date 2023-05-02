@@ -74,7 +74,7 @@ def avgIDF (IDFs, testFile, stoplist):
                 # word in IDFs and word not in stoplist
                 if word.lower() in IDFs and word.lower() not in stoplist:
                     sum += IDFs[word.lower()]
-                    print(word.lower() + str(IDFs[word.lower()]))
+                    print(word.lower() + " " + str(IDFs[word.lower()]))
             avg = sum / len(sentence)
             avg_sent_IDF[f'{sentence}.'] = avg
     print(avg_sent_IDF)  
