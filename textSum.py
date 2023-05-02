@@ -21,9 +21,13 @@ training_data = args.training_data
 test_data = args.test_data
 start_sentences = int(args.start_sentences)
 threshold = float(args.threshold)
-stoplist = "data/stoplist.txt"
+stoplistFile = "data/stoplist.txt"
 
-def training(trainingFile, stoplistFile):
+sList = open(stoplistFile, "r", encoding="utf-8")
+stoplist = set(sList.readlines())
+stoplist = [word.strip("\n") for word in stoplist]
+
+def training(trainingFile, stoplist):
     """
         Trains the model by going through the training 
         documents and calculating the IDFs for the words
@@ -37,10 +41,6 @@ def training(trainingFile, stoplistFile):
     wordCount = dict()
     
     training_docs = open(trainingFile, "r", encoding="utf-8")
-
-    sList = open(stoplistFile, "r", encoding="utf-8")
-    stoplist = set(sList.readlines())
-    stoplist = [word.strip("\n") for word in stoplist]
 
     doc_count = 0
     # get df for all words
@@ -66,13 +66,9 @@ def training(trainingFile, stoplistFile):
     training_docs.close()
     return IDFs
 
-def avgIDF (IDFs, testFile, stoplistFile):
+def avgIDF (IDFs, testFile, stoplist):
     test_docs = open(testFile, "r", encoding="utf-8")
     avg_sent_IDF = dict()
-
-    sList = open(stoplistFile, "r", encoding="utf-8")
-    stoplist = set(sList.readlines())
-    stoplist = [word.strip("\n") for word in stoplist]
 
     for doc in test_docs: # each line is a doc
         sum = 0
